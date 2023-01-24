@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 )
@@ -9,7 +10,7 @@ import (
 // Entity
 type Product struct {
 	ID          int     `json:"id"`
-	Name        string  `json:"name"`
+	Name        string  `json:"name" validate:"require"`
 	Description string  `json:"description"`
 	Price       float32 `json:"price"`
 	SKU         string  `json:"sku"`
@@ -32,6 +33,18 @@ func (p *Product) FromJSON(r io.Reader) error {
 	return e.Decode(p)
 }
 
+var ErrProductNotFound = fmt.Errorf("Product not found")
+
+func findProduct(id int) (*Product, int, error) {
+	for i, p := range productList {
+		if p.ID == id {
+			return p, i, nil
+		}
+	}
+
+	return nil, -1, ErrProductNotFound
+}
+
 // метод возвращает все сущности из БД
 func GetProducts() Products {
 	return productList
@@ -50,12 +63,16 @@ func getNextID() int {
 }
 
 // метод полнестью заменяет сущность
-func PutProduct(prod *Product) {
-	for i, v := range productList { // ищем в БД сущность с нужным id
-		if v.ID == prod.ID {
-			productList[i] = prod
-		}
+func PutProduct(id int, prod *Product) error {
+	_, pos, err := findProduct(id)
+	if err != nil {
+		return err
 	}
+
+	prod.ID = id
+	productList[pos] = prod
+
+	return nil
 }
 
 // БД
