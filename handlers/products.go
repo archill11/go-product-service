@@ -22,7 +22,7 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		p.GetProducts(rw, req)
 		return
 	}
-
+	
 	if req.Method == http.MethodPost { // POST
 		p.addProducts(rw, req)
 		return
