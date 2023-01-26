@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  todo-app:
+  my-app:
     build: ./
     ports:
       - 9090:9090

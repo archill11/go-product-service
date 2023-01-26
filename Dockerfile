@@ -1,12 +1,11 @@
 FROM golang:1.19-alpine
 
-RUN go version
-ENV GOPATH=/
+WORKDIR /app
 
 COPY ./ ./
 
 # build go app
 RUN go mod download
-RUN go build -o todo-app ./main.go
+RUN go build -o my-app ./main.go
 
-CMD ["./todo-app"]
+CMD ["./my-app"]
